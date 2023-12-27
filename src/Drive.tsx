@@ -3,7 +3,7 @@ import { ShdwDrive, StorageAccountResponse, ShadowDriveVersion } from "@shadow-d
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as anchor from "@project-serum/anchor";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, Connection } from "@solana/web3.js";
 import { CircularProgress, TextField, FormControl, Select, InputLabel, MenuItem, Button, FormLabel, RadioGroup, FormControlLabel, Radio, styled, LinearProgress, Container, Grid } from "@mui/material";
 
 const bytesToHuman = (bytes: any, si = false, dp = 1) => {
@@ -37,7 +37,9 @@ const bytesToHuman = (bytes: any, si = false, dp = 1) => {
  * 
  */
 export default function Drive() {
-	const { connection } = useConnection();
+  const rpc = "https://rpc.helius.xyz/?api-key=409065f8-dc1f-4997-8124-f70ae2b2b870";
+  const connection = new Connection(rpc, "confirmed");
+	// const { connection } = useConnection();
 	const [drive, setDrive] = useState<ShdwDrive>();
 	const wallet = useWallet();
 	const [acc, setAcc] = useState<StorageAccountResponse>();
@@ -47,7 +49,7 @@ export default function Drive() {
 	const [radioValue, setRadioValue] = useState<PublicKey | String>();
 	const [uploadLocs, setUploadLocs] = useState<any>();
 	const [accName, setAccName] = useState<string>('');
-	const [accSize, setAccSize] = useState<string>('1GB');
+	const [accSize, setAccSize] = useState<string>('1MB');
 	const [loading, setLoading] = useState<boolean>();
 	const [tx, setTx] = useState<String>();
 	const [version, setVersion] = useState<ShadowDriveVersion>('v2');
@@ -116,6 +118,7 @@ export default function Drive() {
 	}, [wallet.connected])
 	const refreshAccounts = async () => {
 		const accounts = await drive?.getStorageAccounts('v2');
+    console.log('accounts >>> ', accounts);
 		setAccs(accounts!);
 	}
 	useEffect(() => {
@@ -151,7 +154,7 @@ export default function Drive() {
 								focused
 								sx={{
 									input: {
-										color: "white",
+										color: "black",
 									}
 								}}
 								value={accName} onChange={(e) => setAccName(e.target.value)}></TextField>
@@ -167,13 +170,13 @@ export default function Drive() {
 									value={accSize}
 									label="Age"
 									sx={{
-										color: 'white',
+										color: 'black',
 									}}
 									onChange={(e) => { setAccSize(e.target.value) }}
 								>
 									<MenuItem value={'1GB'}>1GB</MenuItem>
-									<MenuItem value={'10GB'}>10GB</MenuItem>
-									<MenuItem value={'50GB'}>50GB</MenuItem>
+									<MenuItem value={'1MB'}>1MB</MenuItem>
+									<MenuItem value={'2KB'}>2KB</MenuItem>
 								</Select>
 							</FormControl>
 							<FormControl sx={{ marginLeft: '20px', width: '100px' }}
@@ -188,7 +191,7 @@ export default function Drive() {
 									value={version}
 									label="version"
 									sx={{
-										color: 'white',
+										color: 'black',
 									}}
 									onChange={(e) => { setVersion(e.target.value as ShadowDriveVersion) }}
 								>
